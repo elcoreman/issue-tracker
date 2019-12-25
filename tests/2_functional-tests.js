@@ -40,8 +40,7 @@ suite("Functional Tests", function() {
         .send({
           issue_title: "Title",
           issue_text: "text",
-          created_by: "Functional Test - Every field filled in"
-        })
+          created_by: "Functional Test - Every field filled in"        })
         .end(function(err, res) {
           let body = JSON.stringify(res.body);
           assert.equal(res.status, 200);
@@ -104,3 +103,4 @@ suite("Functional Tests", function() {
     test("Valid _id", function(done) {});
   });
 });
+  
