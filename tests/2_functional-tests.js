@@ -19,15 +19,43 @@ suite("Functional Tests", function() {
           status_text: "In QA"
         })
         .end(function(err, res) {
+          let body = JSON.stringify(res.body);
           assert.equal(res.status, 200);
-
-          //fill me in too!
-
+          assert.equal(body.issue_title, "Title");
+          assert.equal(body.issue_text, "text");
+          assert.equal(
+            body.created_by,
+            "Functional Test - Every field filled in"
+          );
+          assert.equal(body.assigned_to, "Chai and Mocha");
+          assert.equal(body.status_text, "In QA");
           done();
         });
     });
 
-    test("Required fields filled in", function(done) {});
+    test("Required fields filled in", function(done) {
+      chai
+        .request(server)
+        .post("/api/issues/test")
+        .send({
+          issue_title: "Title",
+          issue_text: "text",
+          created_by: "Functional Test - Every field filled in"
+        })
+        .end(function(err, res) {
+          let body = JSON.stringify(res.body);
+          assert.equal(res.status, 200);
+          assert.equal(body.issue_title, "Title");
+          assert.equal(body.issue_text, "text");
+          assert.equal(
+            body.created_by,
+            "Functional Test - Every field filled in"
+          );
+          assert.equal(body.assigned_to, "Chai and Mocha");
+          assert.equal(body.status_text, "In QA");
+          done();
+        });
+    });
 
     test("Missing required fields", function(done) {});
   });
