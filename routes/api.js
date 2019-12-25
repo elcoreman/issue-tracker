@@ -4,8 +4,10 @@ var expect = require("chai").expect;
 var MongoClient = require("mongodb");
 var ObjectId = require("mongodb").ObjectID;
 
-module.exports = function(app) {
-  MongoClient.connect(process.env.DB, function(err, client) {
+MongoClient.connect(process.env.DB, function(err, client) {
+  module.exports = function(app) {
+    if (err) console.log("Database error: " + err);
+    console.log("Successful database connection");
     const db = client.db("test");
     app
       .route("/api/issues/:project")
@@ -32,5 +34,5 @@ module.exports = function(app) {
       .delete(function(req, res) {
         var project = req.params.project;
       });
-  });
-};
+  }
+});
