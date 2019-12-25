@@ -4,8 +4,8 @@ var expect = require("chai").expect;
 var MongoClient = require("mongodb");
 var ObjectId = require("mongodb").ObjectID;
 
-MongoClient.connect(process.env.DB, function(err, client) {
-  module.exports = function(app) {
+module.exports = function(app) {
+  MongoClient.connect(process.env.DB, function(err, client) {
     if (err) console.log("Database error: " + err);
     console.log("Successful database connection");
     const db = client.db("test");
@@ -14,10 +14,12 @@ MongoClient.connect(process.env.DB, function(err, client) {
 
       .get(function(req, res) {
         var project = req.params.project;
+        console.log("get");
       })
 
       .post(function(req, res) {
         var project = req.params.project;
+        console.log("post");
         db.collection("issues").insertOne(
           {
             issue_title: req.body.issue_title,
@@ -27,19 +29,25 @@ MongoClient.connect(process.env.DB, function(err, client) {
             status_text: req.body.status_text
           },
           (err, res) => {
-            if (err) throw err;
+            if (err) {
+              console.log("error", err);
+              res.redirect("/api/issues/" + project);
+            }
             console.log("Number of documents inserted: " + res.insertedCount);
             db.close();
+            res.redirect("/");
           }
         );
       })
 
       .put(function(req, res) {
         var project = req.params.project;
+        console.log("put");
       })
 
       .delete(function(req, res) {
         var project = req.params.project;
+        console.log("delete");
       });
-  };
-});
+  });
+};
