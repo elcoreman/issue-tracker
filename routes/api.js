@@ -18,13 +18,20 @@ MongoClient.connect(process.env.DB, function(err, client) {
 
       .post(function(req, res) {
         var project = req.params.project;
-        db.issues.insert({
-          issue_title: req.body.issue_title,
-          issue_text: req.body.issue_text,
-          created_by: req.body.created_by,
-          assigned_to: req.body.assigned_to,
-          status_text: req.body.status_text
-        });
+        db.collection("issues").insertOne(
+          {
+            issue_title: req.body.issue_title,
+            issue_text: req.body.issue_text,
+            created_by: req.body.created_by,
+            assigned_to: req.body.assigned_to,
+            status_text: req.body.status_text
+          },
+          (err, res) => {
+            if (err) throw err;
+            console.log("Number of documents inserted: " + res.insertedCount);
+            db.close();
+          }
+        );
       })
 
       .put(function(req, res) {
@@ -34,5 +41,5 @@ MongoClient.connect(process.env.DB, function(err, client) {
       .delete(function(req, res) {
         var project = req.params.project;
       });
-  }
+  };
 });
