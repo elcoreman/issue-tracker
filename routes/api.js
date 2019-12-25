@@ -13,11 +13,13 @@ module.exports = function(app) {
       .route("/api/issues/:project")
 
       .get(function(req, res) {
+        res.json({ xxx: "get" });
         var project = req.params.project;
         console.log("get");
       })
 
       .post(function(req, res) {
+        res.json({ xxx: "post" });
         var project = req.params.project;
         console.log("post");
         db.collection("issues").insertOne(
@@ -41,11 +43,13 @@ module.exports = function(app) {
       })
 
       .put(function(req, res) {
+        res.json({ xxx: "put" });
         var project = req.params.project;
         console.log("put");
       })
 
       .delete(function(req, res) {
+        res.json({ xxx: "delete" });
         var project = req.params.project;
         console.log("delete");
       });
