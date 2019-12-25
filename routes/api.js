@@ -8,20 +8,18 @@ module.exports = function(app) {
   MongoClient.connect(process.env.DB, function(err, client) {
     if (err) console.log("Database error: " + err);
     console.log("Successful database connection");
-    const db = client.db("test");
+    var db = client.db("test");
     app
       .route("/api/issues/:project")
 
       .get(function(req, res) {
-        res.json({ xxx: "get" });
         var project = req.params.project;
-        console.log("get");
+        res.redirect("/aaa");
       })
 
       .post(function(req, res) {
-        res.json({ xxx: "post" });
+        res.redirect("/bbb");
         var project = req.params.project;
-        console.log("post");
         db.collection("issues").insertOne(
           {
             issue_title: req.body.issue_title,
@@ -43,15 +41,13 @@ module.exports = function(app) {
       })
 
       .put(function(req, res) {
-        res.json({ xxx: "put" });
+        res.redirect("/ccc");
         var project = req.params.project;
-        console.log("put");
       })
 
       .delete(function(req, res) {
-        res.json({ xxx: "delete" });
+        res.redirect("/ddd");
         var project = req.params.project;
-        console.log("delete");
       });
   });
 };
