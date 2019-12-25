@@ -40,7 +40,10 @@ suite("Functional Tests", function() {
         .send({
           issue_title: "Title",
           issue_text: "text",
-          created_by: "Functional Test - Every field filled in"        })
+          created_by: "Functional Test - Every field filled in",
+          assigned_to: "",
+          status_text: ""
+        })
         .end(function(err, res) {
           let body = JSON.stringify(res.body);
           assert.equal(res.status, 200);
@@ -50,13 +53,30 @@ suite("Functional Tests", function() {
             body.created_by,
             "Functional Test - Every field filled in"
           );
-          assert.equal(body.assigned_to, "Chai and Mocha");
-          assert.equal(body.status_text, "In QA");
+          assert.equal(body.assigned_to, "");
+          assert.equal(body.status_text, "");
           done();
         });
     });
 
-    test("Missing required fields", function(done) {});
+    test("Missing required fields", function(done) {
+      chai
+        .request(server)
+        .post("/api/issues/test")
+        .send({
+          issue_title: "",
+          issue_text: "",
+          created_by: "",
+          assigned_to: "Chai and Mocha",
+          status_text: "In QA"
+        })
+        .end(function(err, res) {
+          let body = JSON.stringify(res.body);
+          assert.equal(res.status, 200);
+          assert.equal(body, "missing inputs");
+          done();
+        });
+    });
   });
 
   suite("PUT /api/issues/{project} => text", function() {
@@ -103,4 +123,3 @@ suite("Functional Tests", function() {
     test("Valid _id", function(done) {});
   });
 });
-  
