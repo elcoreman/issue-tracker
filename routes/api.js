@@ -15,10 +15,14 @@ module.exports = app => {
       let q = req.query;
       if (q._id) q._id = new ObjectId(q._id);
       if (q.open) q.open = String(q.open) == "true";
-      MongoClient.connect(CONNECTION_STRING, (err, db) => {
-        let collection = db.db("test1").collection(project);
-        collection.find(q).toArray((err, docs) => res.json(docs));
-      });
+      MongoClient.connect(
+        CONNECTION_STRING,
+        { useUnifiedTopology: true },
+        (err, db) => {
+          let collection = db.db("test1").collection(project);
+          collection.find(q).toArray((err, docs) => res.json(docs));
+        }
+      );
     })
 
     .post((req, res) => {
@@ -36,13 +40,17 @@ module.exports = app => {
       if (!issue.issue_title || !issue.issue_text || !issue.created_by) {
         res.send("missing inputs");
       } else {
-        MongoClient.connect(CONNECTION_STRING, (err, db) => {
-          let collection = db.db("test1").collection(project);
-          collection.insertOne(issue, (err, doc) => {
-            issue._id = doc.insertedId;
-            res.json(issue);
-          });
-        });
+        MongoClient.connect(
+          CONNECTION_STRING,
+          { useUnifiedTopology: true },
+          (err, db) => {
+            let collection = db.db("test1").collection(project);
+            collection.insertOne(issue, (err, doc) => {
+              issue._id = doc.insertedId;
+              res.json(issue);
+            });
+          }
+        );
       }
     })
 
@@ -57,20 +65,23 @@ module.exports = app => {
         res.send("no updated field sent");
       } else {
         updates.updated_on = new Date();
-        MongoClient.connect(CONNECTION_STRING, (err, db) => {
-          let collection = db.db("test1").collection(project);
-          collection.findAndModify(
-            { _id: new ObjectId(issue) },
-            [["_id", 1]],
-            { $set: updates },
-            { new: true },
-            (err, doc) => {
-              !err
-                ? res.send("successfully updated")
-                : res.send("could not update " + issue + " " + err);
-            }
-          );
-        });
+        MongoClient.connect(
+          CONNECTION_STRING,
+          { useUnifiedTopology: true },
+          (err, db) => {
+            let collection = db.db("test1").collection(project);
+            collection.findOneAndUpdate(
+              { _id: new ObjectId(issue) },
+              { $set: updates },
+              { new: true },
+              (err, doc) => {
+                !err
+                  ? res.send("successfully updated")
+                  : res.send("could not update " + issue + " " + err);
+              }
+            );
+          }
+        );
       }
     })
 
@@ -80,14 +91,21 @@ module.exports = app => {
       if (!issue) {
         res.send("_id error");
       } else {
-        MongoClient.connect(CONNECTION_STRING, (err, db) => {
-          let collection = db.db("test1").collection(project);
-          collection.findAndRemove({ _id: new ObjectId(issue) }, (err, doc) => {
-            !err
-              ? res.send("deleted " + issue)
-              : res.send("could not delete " + issue + " " + err);
-          });
-        });
+        MongoClient.connect(
+          CONNECTION_STRING,
+          { useUnifiedTopology: true },
+          (err, db) => {
+            let collection = db.db("test1").collection(project);
+            collection.findOneAndDelete(
+              { _id: new ObjectId(issue) },
+              (err, doc) => {
+                !err
+                  ? res.send("deleted " + issue)
+                  : res.send("could not delete " + issue + " " + err);
+              }
+            );
+          }
+        );
       }
     });
 };
